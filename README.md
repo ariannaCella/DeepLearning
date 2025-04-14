@@ -1,7 +1,5 @@
 # Deep Learning - Classificazione delle Auto con Stanford Cars
 
-![Esempio di immagine del dataset](https://ai.stanford.edu/~jkrause/cars/car_dataset.html)
-
 ## 📚 Descrizione del Progetto
 
 Questo progetto si concentra sulla classificazione di immagini di automobili utilizzando il dataset [Stanford Cars](https://ai.stanford.edu/~jkrause/cars/car_dataset.html), che contiene 16.185 immagini suddivise in 196 classi. L'obiettivo è sviluppare un modello di deep learning in grado di identificare correttamente la marca, il modello e l'anno di un'auto a partire da un'immagine.
@@ -23,7 +21,7 @@ DeepLearning/
 └── README.md                # Questo file
 ```
 
-## 🔧 Installazione
+## ⚙️ Installazione
 
 1. **Clona il repository:**
 
@@ -33,10 +31,9 @@ DeepLearning/
    ```
 
 2. **Crea un ambiente virtuale (opzionale ma consigliato):**
-
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # Su Windows: venv\Scripts\activate
+   conda create -n myenv_stanford_cars python=3.9 -y
+   conda activate myenv_stanford_cars
    ```
 
 3. **Installa le dipendenze:**
@@ -44,79 +41,58 @@ DeepLearning/
    ```bash
    pip install -r requirements.txt
    ```
-
-## 📅 Preparazione del Dataset
-
-A causa delle dimensioni del dataset (oltre 1 GB), non è incluso direttamente nel repository. Segui questi passaggi per scaricarlo e prepararlo:
-
-1. **Scarica il dataset Stanford Cars:**
-
-   - Vai alla pagina ufficiale: [Stanford Cars Dataset](https://ai.stanford.edu/~jkrause/cars/car_dataset.html)
-   - Scarica i seguenti file:
-     - `cars_train.tgz`
-     - `cars_test.tgz`
-     - `cars_train_annos.mat`
-     - `cars_test_annos.mat`
-     - `devkit.tar`
-
-2. **Estrai i file scaricati:**
-
-   - Posiziona tutti i file scaricati nella directory `dataset/` del repository.
-   - Estrai i file `.tgz` e `.tar`:
-
-     ```bash
-     tar -xvzf cars_train.tgz -C dataset/
-     tar -xvzf cars_test.tgz -C dataset/
-     tar -xvzf devkit.tar -C dataset/
-     ```
-
-3. **Verifica la struttura della directory `dataset/`:**
-
-   Dopo l'estrazione, la struttura dovrebbe essere simile a questa:
-
-   ```
-   dataset/
-   ├── cars_train/
-   ├── cars_test/
-   ├── devkit/
-   ├── cars_train_annos.mat
-   └── cars_test_annos.mat
-   ```
-
-## 🚀 Esecuzione del Progetto
-
-1. **Avvia Jupyter Notebook:**
-
+   In alternativa:
    ```bash
-   jupyter notebook
+   pip install torch torchvision matplotlib scikit-learn kaggle kagglehub tensorboard
    ```
 
-2. **Apri il notebook:**
+## 📦 Dataset (Stanford Cars)
 
-   - Naviga nella directory `notebooks/` e apri `car_classification.ipynb`.
+Hai due opzioni:
 
-3. **Segui le istruzioni nel notebook:**
+### 1. **Download automatico da Kaggle**
 
-   - Il notebook guida attraverso il processo di caricamento dei dati, pre-processing, definizione del modello, addestramento e valutazione.
+```python
+import kagglehub
+path = kagglehub.dataset_download("rickyyyyyyy/torchvision-stanford-cars")
+```
 
-## 🧠 Architettura del Modello
-
-Il modello utilizza una rete neurale convoluzionale (CNN) basata su architetture pre-addestrate come ResNet50 o EfficientNet, con tecniche di fine-tuning per adattarsi al dataset specifico. L'addestramento include strategie di data augmentation e ottimizzazione per migliorare le prestazioni.
-
-## 📊 Risultati Attesi
-
-Dopo l'addestramento, il modello dovrebbe raggiungere un'accuratezza elevata nella classificazione delle immagini delle auto. I risultati dettagliati, inclusi grafici di accuratezza e perdita, sono disponibili nel notebook.
-
-## 📌 Note Importanti
-
-- **Dataset:** Assicurati di scaricare e posizionare correttamente il dataset nella directory `dataset/` come descritto sopra.
-- **Ambiente:** È consigliato utilizzare un ambiente virtuale per evitare conflitti di dipendenze.
-- **GPU:** L'addestramento del modello può richiedere l'uso di una GPU per tempi di esecuzione ragionevoli.
-
-## 📄 Licenza
-
-Questo progetto è distribuito sotto la licenza MIT. Consulta il file [LICENSE](LICENSE) per ulteriori dettagli.
+Usa `--dataset_path /kaggle/input/torchvision-stanford-cars` per puntare al dataset.
 
 ---
 
-Se hai domande o suggerimenti, sentiti libero di aprire un'issue o contattare direttamente. Buon divertimento con il deep learning! 🚗💻
+### 2. **Download manuale**
+
+Scarica da:  
+https://www.kaggle.com/datasets/rickyyyyyyy/torchvision-stanford-cars
+
+Estrai i file nella directory:
+
+```
+dataset/stanford_cars/
+```
+
+---
+
+## 🚀 Avvio addestramento
+
+```bash
+python hpc_test.py   --model_name run_resnet18   --run_name run_resnet18   --epochs 30   --batch_size 32   --lr 0.0001   --dataset_path /kaggle/input/torchvision-stanford-cars   --print_every 200   --opt Adam
+```
+
+---
+
+## 📈 TensorBoard (opzionale)
+
+```bash
+tensorboard --logdir=runs
+```
+
+---
+
+## 💾 Output
+
+- Modello salvato come `stanford_net_<model_name>.pth`
+- Log salvati in `runs/`
+
+
