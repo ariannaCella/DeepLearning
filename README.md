@@ -8,17 +8,20 @@ Questo progetto si concentra sulla classificazione di immagini di automobili uti
 
 ```
 DeepLearning/
-├── dataset/                 # Directory per il dataset Stanford Cars
-│   ├── cars_train/
-│   ├── cars_test/
-│   ├── devkit/
-│   └── ...
-├── notebooks/               # Notebook Jupyter per esplorazione e addestramento
-│   └── car_classification.ipynb
-├── models/                  # Modelli salvati
-├── utils/                   # Funzioni di utilità
-├── requirements.txt         # Dipendenze del progetto
-└── README.md                # Questo file
+├── dataset/                    # Directory per il dataset Stanford Cars
+│   ├── Stanford_Cars           # Dataset stanford
+│   ├── dataset_analysis.ipynb  # Per analizzare il dataset
+│   └── dataset.py              # Caricamento del dataset
+│
+├── runs/                       # Salvataggio delle informazioni per visualizzare i risultati su TensorBoard
+│   └── Name_Run [...]
+│    
+├── hpc_test.py                 # Per addestramento e valutazione 
+├── utils.py                    # Funzioni di utilità
+├── solver.py                   # Funzioni per l'addestramento, la valutazione e il test del modello
+├── model.py                    # Reti pre-addestrate
+├── requirements.txt            # Dipendenze del progetto
+└── README.md                   # Informazioni sul progetto
 ```
 
 ## ⚙️ Installazione
