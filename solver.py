@@ -152,9 +152,13 @@ class Solver(object):
         # now lets evaluate the model on the test set
         correct = 0
         total = 0
-
+        
+        # load best model saved
+        self.load_model()
         # put net into evaluation mode
         self.net.eval()
+
+        # save pred e labels
         all_preds = []
         all_labels = []
 
