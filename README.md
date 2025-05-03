@@ -2,7 +2,7 @@
 
 ## 📚 Descrizione del Progetto
 
-Questo progetto si concentra sulla classificazione di immagini di automobili utilizzando il dataset [Stanford Cars](https://ai.stanford.edu/~jkrause/cars/car_dataset.html), che contiene 16.185 immagini suddivise in 196 classi. L'obiettivo è sviluppare un modello di deep learning in grado di identificare correttamente la marca, il modello e l'anno di un'auto a partire da un'immagine.
+Questo progetto si concentra sulla classificazione di immagini di automobili utilizzando il dataset [Stanford Cars](https://pytorch.org/vision/main/generated/torchvision.datasets.StanfordCars.html), che contiene 16.185 immagini suddivise in 196 classi. L'obiettivo è sviluppare un modello di deep learning in grado di identificare correttamente la marca, il modello e l'anno di un'auto a partire da un'immagine.
 
 ## 🗂️ Struttura del Repository
 
@@ -15,11 +15,16 @@ DeepLearning/
 │
 ├── runs/                       # Salvataggio delle informazioni per visualizzare i risultati su TensorBoard
 │   └── Name_Run [...]
-│    
+│
+├── best_models/                # Salvataggio dei migliori modelli addestrati
+│   ├── best_model_Adam.pth     # Miglior modello con ottimizzatore Adam
+│   └── best_model_SGD.pth      # Miglior modello con ottimizzatore SGD
+│        
 ├── hpc_test.py                 # Per addestramento e valutazione 
 ├── utils.py                    # Funzioni di utilità
 ├── solver.py                   # Funzioni per l'addestramento, la valutazione e il test del modello
 ├── model.py                    # Reti pre-addestrate
+├── inference.py                # Inferenza con i best_models
 ├── requirements.txt            # Dipendenze del progetto
 └── README.md                   # Informazioni sul progetto
 ```
@@ -29,8 +34,7 @@ DeepLearning/
 1. **Clona il repository:**
 
    ```bash
-   git clone https://github.com/ariannaCella/DeepLearning.git
-   cd DeepLearning
+   git clone https://github.com/ariannaCella/StanfordCars_DeepLearningProject.git
    ```
 
 2. **Crea un ambiente virtuale (opzionale ma consigliato):**
@@ -80,12 +84,14 @@ dataset/stanford_cars/
 ## 🚀 Avvio addestramento
 
 ```bash
-python hpc_test.py   --model_name run_resnet18   --run_name run_resnet18   --epochs 30   --batch_size 32   --lr 0.0001   --dataset_path /kaggle/input/torchvision-stanford-cars   --print_every 200   --opt Adam
+python hpc_test.py   --model_name run_resnet18   --run_name run_resnet18   --epochs 50   --batch_size 32   --lr 0.00001   --dataset_path /kaggle/input/torchvision-stanford-cars   --opt Adam   --aug
 ```
 
 ---
 
 ## 📈 TensorBoard (opzionale)
+
+Per visualizzare i risultati graficamente: Training Loss, Validation Loss, Validation Accuracy, Test Accuracy, Matrice di Confusione e analisi delle classi maggiormente confuse.
 
 ```bash
 tensorboard --logdir=runs
@@ -97,5 +103,11 @@ tensorboard --logdir=runs
 
 - Modello salvato come `stanford_net_<model_name>.pth`
 - Log salvati in `runs/`
+  
+---
+## 🚀 Avvio inferenza (TODO)
 
+```bash
+python inference.py   --model_name run_resnet18   --dataset_path /kaggle/input/torchvision-stanford-cars   --opt Adam
+```
 
