@@ -16,17 +16,12 @@ DeepLearning/
 ├── runs/                       # Salvataggio delle informazioni per visualizzare i risultati su TensorBoard
 │   ├── Name_Run [...]         
 │   └── visual_runs_tensorboard.ipynb
-│
-├── best_models/                # Salvataggio dei migliori modelli addestrati
-│   ├── best_model_Adam.pth     # Miglior modello con ottimizzatore Adam
-│   └── best_model_SGD.pth      # Miglior modello con ottimizzatore SGD
 │        
 ├── hpc_test.py                 # Per addestramento e valutazione 
 ├── utils.py                    # Funzioni di utilità
 ├── solver.py                   # Funzioni per l'addestramento, la valutazione e il test del modello
 ├── model.py                    # Reti pre-addestrate
 ├── inference.ipynb             # Inferenza con i best_models
-├── requirements.txt            # Dipendenze del progetto
 └── README.md                   # Informazioni sul progetto
 ```
 
@@ -63,9 +58,10 @@ Hai due opzioni:
 ```python
 import kagglehub
 path = kagglehub.dataset_download("rickyyyyyyy/torchvision-stanford-cars")
+print(path)
 ```
 
-Usa `--dataset_path /kaggle/input/torchvision-stanford-cars` per puntare al dataset (path restituito dal precedente import).
+Usa `--dataset_path <path>` per puntare al dataset (path restituito dal precedente import).
 
 ---
 
@@ -85,7 +81,7 @@ Usa `--dataset_path dataset/stanford_cars` per puntare al dataset.
 
 ### Analisi del Dataset
 
-Usando il notebook  `dataset_analysis.ipynb` è possibile esplorare il dataset, visualizzare immagini e analizzare il bilanciamento tra classi.
+Usando il notebook `dataset_analysis.ipynb` è possibile esplorare il dataset, visualizzare immagini e analizzare il bilanciamento tra classi.
 
 ---
 ## 🚀 Avvio addestramento
@@ -94,10 +90,10 @@ Usando il notebook  `dataset_analysis.ipynb` è possibile esplorare il dataset, 
 python hpc_test.py \
   --model_name run_resnet18 \
   --run_name run_resnet18 \
-  --epochs 50 \
+  --epochs 300 \
   --batch_size 32 \
   --lr 0.00001 \
-  --dataset_path /kaggle/input/torchvision-stanford-cars \
+  --dataset_path <path> \
   --opt Adam \
   --aug \
   --seed 42
@@ -124,6 +120,6 @@ Oppure eseguire il notebook `visual_runs_tensorboard.ipynb` su Colab.
 ---
 ## 🚀 Avvio inferenza
 
-Per eseguire l'inferenza è possibile usare il notebook  `inference.ipynb`.
+Per eseguire l'inferenza è possibile usare il notebook `inference.ipynb`.
 
 
