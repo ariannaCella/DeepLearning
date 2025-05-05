@@ -58,6 +58,7 @@ def plot_confusion_matrix_with_errors(cm, class_names, writer, global_step):
     num_max_errors = 10  # Numero di errori più gravi da evidenziare
     
     # Mostra le prime 10 coppie di classi più confuse
+    print("\nCoppie di classi più confuse:")
     for pair in top_confused_pairs[:num_max_errors]:
         print(f"Class {pair[0]} is often confused with {pair[1]} ({pair[2]} times)")
     
@@ -83,8 +84,9 @@ def plot_confusion_matrix_with_errors(cm, class_names, writer, global_step):
    
     plt.close(fig)  # Chiude la figura per evitare memory leak
     
-    
-def analyze_class_performance(y_true, y_pred, cm, class_names, top_n=5):
+
+# funzione per analizzare le performance del modello, valutando quali sono le classi che vengono maggiormente confuse
+def analyze_class_performance(y_true, y_pred, cm, class_names, writer , top_n=5):
     
     # Calcola metriche per ogni classe
     TP = np.diag(cm)  # Veri Positivi
@@ -103,25 +105,47 @@ def analyze_class_performance(y_true, y_pred, cm, class_names, top_n=5):
     # Mostra classification report per avere tutte le metriche
     print("\nDettagli per classe:\n")
     print(classification_report(y_true, y_pred, target_names=class_names))
+    
+    ### aggiunta tensor board ###
+    classif_report = classification_report(y_true, y_pred, target_names=class_names, output_dict=True)
 
-    # Ordina le classi per F1-score
+    report_text = "| Classe | Precisione | Recall | F1-Score | Supporto | Errori |\n"
+    report_text += "|:------:|:----------:|:------:|:--------:|:--------:|:------:|\n"
+    for i, class_name in enumerate(class_names):
+        metrics = classif_report[class_name]
+        errors = int(FN[i] + FP[i])  # Errori = falsi positivi + falsi negativi
+        report_text += f"| {class_name} | {metrics['precision']:.2f} | {metrics['recall']:.2f} | {metrics['f1-score']:.2f} | {int(metrics['support'])} | {errors} |\n"
+
+    writer.add_text('Performance/Classification_Report_with_Errors', report_text)
+    
+    
     sorted_classes = sorted(zip(class_names, precision, recall, f1_scores), key=lambda x: x[3], reverse=True)
 
+    full_analysis_text = "**Classi ordinate per F1-score:**\n\n"
+    
+    full_analysis_text += "**Migliori classi (F1-score più alto):**\n"
     print("\nTop classi con migliore performance (F1-score più alto):")
     for i in range(min(top_n, len(sorted_classes))):
+        full_analysis_text += f"- {sorted_classes[i][0]}: Precisione {sorted_classes[i][1]:.2f}, Recall {sorted_classes[i][2]:.2f}, F1 {sorted_classes[i][3]:.2f}\n"
         print(f"{sorted_classes[i][0]} - Precisione: {sorted_classes[i][1]:.2f}, Recall: {sorted_classes[i][2]:.2f}, F1-score: {sorted_classes[i][3]:.2f}")
 
+    full_analysis_text += "\n**Peggiori classi (F1-score più basso):**\n"
     print("\nTop classi con peggiori performance (F1-score più basso):")
     for i in range(min(top_n, len(sorted_classes))):
+        full_analysis_text += f"- {sorted_classes[-(i+1)][0]}: Precisione {sorted_classes[-(i+1)][1]:.2f}, Recall {sorted_classes[-(i+1)][2]:.2f}, F1 {sorted_classes[-(i+1)][3]:.2f}\n"
         print(f"{sorted_classes[-(i+1)][0]} - Precisione: {sorted_classes[-(i+1)][1]:.2f}, Recall: {sorted_classes[-(i+1)][2]:.2f}, F1-score: {sorted_classes[-(i+1)][3]:.2f}")
+
 
     # Identifica le classi più frequentemente confuse
     most_confused = np.argmax(cm, axis=1)  # Trova per ogni classe la predizione errata più comune
 
+    full_analysis_text += "\n## Classi Più Frequentemente Confuse\n\n"
     print("\n Classi più frequentemente confuse:")
     for i, cls in enumerate(class_names):
         if most_confused[i] != i:  # Se non è se stessa
             print(f"{cls} viene spesso scambiata con {class_names[most_confused[i]]}")
+            full_analysis_text += f"- {cls} → confusa con **{class_names[most_confused[i]]}**\n"
+
 
     # Trova le classi che sono confuse più frequentemente
     max_errors = {}
@@ -133,8 +157,12 @@ def analyze_class_performance(y_true, y_pred, cm, class_names, top_n=5):
     sorted_max_errors = sorted(max_errors.items(), key=lambda x: x[1], reverse=True)
 
     print("\nClassi più confuse:")
+    full_analysis_text += "\n## Classi Più Confuse (Totale Errori)\n\n"
+    
     for class_name, errors in sorted_max_errors[:10]:  # Mostra le prime 10 classi con più errori
         print(f"Class {class_name}: {errors} errori")
+        full_analysis_text += f"- {class_name}: {errors} errori\n"
     
+    writer.add_text('Performance/Full_Analysis', full_analysis_text)
     
     
