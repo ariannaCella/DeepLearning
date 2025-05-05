@@ -47,11 +47,11 @@ DeepLearning/
 3. **Installa le dipendenze:**
 
    ```bash
-   pip install -r requirements.txt
+   conda install numpy matplotlib seaborn scikit-learn pytorch torchvision -c pytorch
    ```
-   In alternativa:
+   Facoltativi:
    ```bash
-   pip install torch torchvision matplotlib scikit-learn kaggle kagglehub tensorboard
+   pip install kagglehub tensorboard
    ```
 
 ## 📦 Dataset (Stanford Cars)
@@ -65,7 +65,7 @@ import kagglehub
 path = kagglehub.dataset_download("rickyyyyyyy/torchvision-stanford-cars")
 ```
 
-Usa `--dataset_path /kaggle/input/torchvision-stanford-cars` per puntare al dataset.
+Usa `--dataset_path /kaggle/input/torchvision-stanford-cars` per puntare al dataset (path restituito dal precedente import).
 
 ---
 
@@ -79,23 +79,28 @@ Estrai i file nella directory:
 ```
 dataset/stanford_cars/
 ```
+Usa `--dataset_path dataset/stanford_cars` per puntare al dataset.
 
 ---
 
+### Analisi del Dataset
+
+Usando il notebook  `dataset_analysis.ipynb` è possibile esplorare il dataset, visualizzare immagini e analizzare il bilanciamento tra classi.
+
+---
 ## 🚀 Avvio addestramento
 
 ```bash
-python hpc_test.py   --model_name run_resnet18   --run_name run_resnet18   --epochs 50   --batch_size 32   --lr 0.00001   --dataset_path /kaggle/input/torchvision-stanford-cars   --opt Adam   --aug
-```
-
----
-
-## 📈 TensorBoard (opzionale)
-
-Per visualizzare i risultati graficamente: Training Loss, Validation Loss, Validation Accuracy, Test Accuracy, Matrice di Confusione e analisi delle classi maggiormente confuse.
-
-```bash
-tensorboard --logdir=runs
+python hpc_test.py \
+  --model_name run_resnet18 \
+  --run_name run_resnet18 \
+  --epochs 50 \
+  --batch_size 32 \
+  --lr 0.00001 \
+  --dataset_path /kaggle/input/torchvision-stanford-cars \
+  --opt Adam \
+  --aug \
+  --seed 42
 ```
 
 ---
@@ -106,9 +111,19 @@ tensorboard --logdir=runs
 - Log salvati in `runs/`
   
 ---
-## 🚀 Avvio inferenza (TODO)
+
+## 📈 TensorBoard (opzionale)
+
+TensorBoard può essere usato per visualizzare i risultati graficamente: Training Loss, Validation Loss, Validation Accuracy, Test Accuracy, Matrice di Confusione e analisi delle classi maggiormente confuse.
 
 ```bash
-python inference.py   --model_name run_resnet18   --dataset_path /kaggle/input/torchvision-stanford-cars   --opt Adam
+tensorboard --logdir=runs
 ```
+Oppure eseguire il notebook `visual_runs_tensorboard.ipynb` su Colab.
+
+---
+## 🚀 Avvio inferenza
+
+Per eseguire l'inferenza è possibile usare il notebook  `inference.ipynb`.
+
 
