@@ -24,13 +24,15 @@ class Solver(object):
         self.writer = writer
 
         # Early stopping
-        self.patience = 8  # Numero massimo di epoche senza miglioramenti
+        self.patience = 50  # Numero massimo di epoche senza miglioramenti, 10 ADAM 50 SGD (20 adam no cong)
         self.best_accuracy = 0
         self.early_stop_counter = 0
         
+        self.test_accuracy = 0
+        
         # Seleziona modello pre addestrato da usare 
-        model_name = "resnet18"
-        self.net = get_model(model_name, num_classes=196)
+        self.net_model_name = "resnet18"
+        self.net = get_model(self.net_model_name, num_classes=196)
         self.net = self.net.to(device)  
         
         # load a pretrained model
@@ -81,20 +83,27 @@ class Solver(object):
                 loss.backward()
                 self.optimizer.step()
 
-                # print statistics
                 running_loss += loss.item()
-                
+
+            # stampa ogni epoca   
             print(f'[{epoch + 1}] Training loss: {running_loss / len(self.train_loader):.3f}')
             self.writer.add_scalar('Training loss',
                 running_loss / len(self.train_loader),
                 epoch)
-
-            # Valuate model ed early stopping
-            val_accuracy = self.validation(epoch)
+            
+            # valutazione modello 
+            val_accuracy, val_loss = self.validation(epoch)
+            
+            self.writer.add_scalars('Loss/train_vs_val', {
+                'Training Loss': running_loss / len(self.train_loader),
+                'Validation Loss': val_loss
+            }, epoch)
+            
+            # valutazione della presenza dell'early stopping
             if val_accuracy > self.best_accuracy:
                 self.best_accuracy = val_accuracy
                 self.early_stop_counter = 0
-                self.save_model()
+                self.save_model() # salvo il modello solo se non peggiora
             else:
                 self.early_stop_counter += 1
                 print(f"Early stopping counter: {self.early_stop_counter}/{self.patience}")
@@ -125,7 +134,7 @@ class Solver(object):
                 outputs = self.net(inputs)
 
                 loss = self.criterion(outputs, labels)
-                # print statistics
+            
                 val_loss += loss.item()
 
                 # the class with the highest energy is what we choose as prediction
@@ -145,7 +154,7 @@ class Solver(object):
         print(f'Accuracy of the network on the validation images: {val_accuracy} %')
 
         self.net.train()
-        return val_accuracy
+        return val_accuracy, val_loss / len(self.validation_loader)
 
 
     def test(self):
@@ -177,11 +186,12 @@ class Solver(object):
                 all_preds.extend(predicted.cpu().numpy())
                 all_labels.extend(labels.cpu().numpy())
 
+        self.test_accuracy = 100 * correct / total
         self.writer.add_scalar('Test accuracy',
-            100 * correct / total)
+            self.test_accuracy)
 
-        print(f'Accuracy of the network on the test images: {100 * correct / total} %')
+        print(f'Accuracy of the network on the test images: {self.test_accuracy} %')
         
         return all_preds, all_labels
         
-        
+    
