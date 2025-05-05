@@ -14,7 +14,8 @@ DeepLearning/
 │   └── dataset.py              # Caricamento del dataset
 │
 ├── runs/                       # Salvataggio delle informazioni per visualizzare i risultati su TensorBoard
-│   └── Name_Run [...]
+│   ├── Name_Run [...]         
+│   └── visual_runs_tensorboard.ipynb
 │
 ├── best_models/                # Salvataggio dei migliori modelli addestrati
 │   ├── best_model_Adam.pth     # Miglior modello con ottimizzatore Adam
@@ -24,7 +25,7 @@ DeepLearning/
 ├── utils.py                    # Funzioni di utilità
 ├── solver.py                   # Funzioni per l'addestramento, la valutazione e il test del modello
 ├── model.py                    # Reti pre-addestrate
-├── inference.py                # Inferenza con i best_models
+├── inference.ipynb             # Inferenza con i best_models
 ├── requirements.txt            # Dipendenze del progetto
 └── README.md                   # Informazioni sul progetto
 ```
