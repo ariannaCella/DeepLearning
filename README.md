@@ -1,4 +1,4 @@
-# Deep Learning - Classificazione delle Auto con Stanford Cars
+# Deep Learning - Classificazione Stanford Cars
 
 ## 📚 Descrizione del Progetto
 
